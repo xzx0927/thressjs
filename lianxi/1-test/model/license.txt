@@ -1,0 +1,11 @@
+Model Information:
+* title:	Minions
+* source:	https://sketchfab.com/3d-models/minions-1c7ebf09128a42648baa8d56370b8847
+* author:	byrokestudios (https://sketchfab.com/byrokestudios)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Minions" (https://sketchfab.com/3d-models/minions-1c7ebf09128a42648baa8d56370b8847) by byrokestudios (https://sketchfab.com/byrokestudios) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
