@@ -1,0 +1,17 @@
+Pip.exe install -i https://pypi.tuna.tsinghua.edu.cn/simple requests
+Pip.exe install -i https://pypi.tuna.tsinghua.edu.cn/simple django
+Django-admin startproject 项目名称
+Cd 项目名称
+Python manage.py runserver
+创建app:django-admin startapp app名称
+Python manage.py makemigrations
+Python manage.py migrate
+Python manage.py createsuperuser
+前端
+npm init vite@latest
+输入项目名称
+Cd 项目名称
+Npm install
+Npm run dev
+Npm install three安装threejs
+注意：都可以使用cnpm(淘宝镜像国内快)

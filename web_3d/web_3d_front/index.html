@@ -4,10 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
+    <title>Vite App</title>
+    <style>
+      .longin{
+        width: 40%;
+        float: right;
+      }
+    </style>
+    <link rel="stylesheet" href="css/style.css">
+
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <div class="longin">
+      <h2>登录</h2>
+      <form action="/templates/zhuye.html" method="get">
+        <label>
+          <input type="text" placeholder="用户名" class="wen-x" name="username" />
+          <input type="password" placeholder="密码" class="wen-x" name="password">
+        </label>
+        <input type="submit" value="登录">
+      </form>
+    </div>
+    <script type="module" src="./src/main.js" ></script>
   </body>
+  
 </html>
