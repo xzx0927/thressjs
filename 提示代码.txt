@@ -16,6 +16,11 @@ Npm run dev
 Npm install three安装threejs
 npm install -g vite
 npm install -g @vue/cli
+
+
+yarn init -y 
+yarn add -D vite
+yarn add -D three
 nrm 是一个 npm 源管理器，允许你快速地在 npm 源间切换:npm install -g nrm
 查看可选的源:nrm ls    
 如果要切换到taobao源，执行命令:nrm use taobao
