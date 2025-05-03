@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息页面</title>
+    <style>
+        /* 现有的CSS样式 */
+        .profile-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .profile-header {
+            text-align: center;
+        }
+        .profile-body {
+            margin-top: 10px;
+        }
+        .profile-detail {
+            margin-top: 5px;
+        }
+        .edit-button, .works-button {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .profile-form {
+            display: none;
+            margin-top: 10px;
+        }
+        .profile-form.show {
+            display: block;
+        }
+        .profile-form div {
+            margin-top: 5px;
+        }
+        .profile-form input[disabled] {
+            background-color: #f0f0f0;
+            border-color: #ccc;
+        }
+    </style>
+    <script type="module">
+        import $ from 'jquery';
+
+        // 重定向到登录页面
+        function redirectToLogin(message) {
+            alert(message || '请先登录！');
+            window.location.href = 'http://127.0.0.1:8000/login_url/';
+        }
+
+        // 根据管理员ID获取个人信息数据
+        function fetchProfileData(userSerial) {
+            if (!userSerial) {
+                redirectToLogin();
+                return;
+            }
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/profile_gain/',
+                type: 'GET',
+                data: { 
+                    user_serial: userSerial
+                 },
+                headers: {
+                    'sessionid': "<sessionid>"// 使用本地存储的token
+                },
+                success: function(data) {
+                    populateProfileData(data);
+                    populateProfileForm(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX请求失败:', error);
+                    redirectToLogin('无法获取个人信息，请稍后重试。');
+                }
+            });
+        }
+
+        // 将个人信息数据填充到页面显示区域
+        function populateProfileData(data) {
+            const userInfo = data.user || {};
+            const labels = ['用户编号', '电子邮件', '电话', '用户名', '积分', '状态'];
+            const values = [
+                userInfo.user_serial || '未提供',
+                userInfo.email || '未提供',
+                userInfo.phone || '未提供',
+                userInfo.username || '未提供',
+                typeof userInfo.integral === 'number' ? userInfo.integral.toLocaleString() : '未提供',
+                userInfo.status || '未提供'
+            ];
+
+            document.querySelectorAll('.profile-detail').forEach((detail, index) => {
+                detail.textContent = `${labels[index]}: ${values[index]}`;
+            });
+        }
+
+        // 将个人信息数据填充到表单编辑区域
+        function populateProfileForm(data) {
+            const userInfo = data.user || {};
+            $('#user_serial').text(userInfo.user_serial || '').attr('disabled', true); // 使用 text 而不是 val 填充 span，并禁用
+            $('#email').val(userInfo.email || '');
+            $('#phone').val(userInfo.phone || '');
+            $('#username').val(userInfo.username || '');
+            $('#integral').text(userInfo.integral ? userInfo.integral.toLocaleString() : '未提供');
+            $('#status').text(userInfo.status || '未提供');
+            $('#password').val(''); // 清空密码输入框
+        }
+
+        // 处理编辑按钮点击事件，切换显示编辑表单
+        function handleEditButtonClick() {
+            $('.profile-body').hide();
+            $('.profile-form').addClass('show');
+            $('.edit-button button, .works-button button').hide();
+            $('#password').closest('div').show(); // 显示密码输入字段
+        }
+
+        // 处理个人作品按钮点击事件
+        function handleWorksButtonClick() {
+            console.log('个人作品按钮点击事件');
+            window.location.href = 'http://127.0.0.1:8000/profile_works/';
+        }
+
+        // 在文档加载完成后执行初始化操作
+        document.addEventListener('DOMContentLoaded', function() {
+            const userSerial = localStorage.getItem('user_serial'); // 添加获取 user_serial 的逻辑
+            fetchProfileData(userSerial); // 调用获取个人信息数据的函数
+            $('.edit-button button').on('click', handleEditButtonClick);
+            $('.works-button button').on('click', handleWorksButtonClick); // 添加个人作品按钮的点击事件监听
+        });
+    </script>
+    <script src="../js/profile_edit.js" type="module"></script>
+</head>
+<body>
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>个人信息</h2>
+        </div>
+        <div class="profile-body">
+            <div class="profile-detail"></div> <!-- 用户编号显示区域 -->
+            <div class="profile-detail"></div>
+            <div class="profile-detail"></div>
+            <div class="profile-detail"></div>
+            <div class="profile-detail"></div>
+            <div class="profile-detail"></div>
+        </div>
+        <div class="profile-form">
+            <form id="profileForm">
+                <div>
+                    <label for="user_serial">用户编号:</label> <!-- 用户编号显示区域 -->
+                    <span id="user_serial"></span>
+                </div>
+                <div>
+                    <label for="email">电子邮件:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div>
+                    <label for="phone">电话:</label>
+                    <input type="text" id="phone" name="phone">
+                </div>
+                <div>
+                    <label for="username">用户名:</label>
+                    <input type="text" id="username" name="username">
+                </div>
+                <div style="display: none;">
+                    <label for="password">密码:</label>
+                    <input type="password" id="password" name="password">
+                </div>
+                <div>
+                    <label>积分:</label>
+                    <span id="integral"></span>
+                </div>
+                <div>
+                    <label>状态:</label>
+                    <span id="status"></span>
+                </div>
+                <div>
+                    <button type="submit">保存</button>
+                </div>
+            </form>
+        </div>
+        <div class="edit-button">
+            <button>修改</button>
+        </div>
+        <div class="works-button">
+            <button>个人作品</button>
+        </div>
+        
+    </div>
+</body>
+</html>

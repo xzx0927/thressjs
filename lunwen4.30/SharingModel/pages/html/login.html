@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录与注册</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <style>
+        .error { color: red; }
+    </style>
+    <script type="module" src="../js/longin_register.js"></script>
+</head>
+<body>
+    <div class="container" id="loginContainer">
+        <h2>登录</h2>
+        <form id="loginForm">
+            <input type="text" name="username" placeholder="用户名" required>
+            <input type="password" name="password" placeholder="密码" required>
+            <button type="submit">登录</button>
+            <div id="loginError" class="error"></div>
+        </form>
+        <div class="toggle-link">
+            <a href="#" onclick="toggleForm('register')">没有账号？注册</a>
+        </div>
+    </div>
+    <div class="container" id="registerContainer" style="display: none;">
+        <h2>注册</h2>
+        <form id="registerForm">
+            <input type="text" name="username" placeholder="用户名" required>
+            <input type="email" name="email" placeholder="邮箱" required>
+            <input type="tel" name="phone" placeholder="手机号" required>
+            <input type="password" name="password" placeholder="密码" required>
+            <button type="submit">注册</button>
+            <div id="registerError" class="error"></div>
+        </form>
+        <div class="toggle-link">
+            <a href="#" onclick="toggleForm('login')">已经有账号？登录</a>
+        </div>
+    </div>
+    
+    <script>
+        function toggleForm(formType) {
+            document.getElementById('loginContainer').style.display = formType === 'login' ? 'block' : 'none';
+            document.getElementById('registerContainer').style.display = formType === 'register' ? 'block' : 'none';
+            }
+
+        
+    </script>
+</body>
+</html>

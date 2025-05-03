@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型搜索</title>
+    <!-- 引入外部CSS文件 -->
+    <link rel="stylesheet" href="../css/model_search.css">
+    <!-- 引入外部JS文件 -->
+    <script type="module" src="../js/model_search.js"></script>
+</head>
+<body>
+    <div class="model-header">
+        <h2>模型搜索</h2>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="输入搜索关键词...">
+            <button type="button" class="search-button" onclick="performSearch()">搜索</button>
+        </div>
+        <div id="searchMessage" class="search-message"></div>
+    </div>
+    <div id="dataDisplay" class="grid-container">
+        <div class="model-card">Loading data...</div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="pagination" class="pagination-container"></div>
+
+    <!-- 图片放大模态框 -->
+    <div class="modal" id="imageModal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <img class="modal-image" id="modalImage" alt="Enlarged model image">
+        </div>
+    </div>
+
+</body>
+</html>
