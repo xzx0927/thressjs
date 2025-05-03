@@ -1,0 +1,2 @@
+django install django-simpleui
+pip install djangorestframework-jwt

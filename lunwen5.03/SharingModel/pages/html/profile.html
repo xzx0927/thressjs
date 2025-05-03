@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息页面</title>
+    <link rel="stylesheet" href="../css/profile.css">
+    <script src="../js/profile.js" type="module"></script>
+    <script src="../js/profile_edit.js" type="module"></script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- 新增返回首页按钮 -->
+        <div class="back-home">
+            <button onclick="goToHomePage()">返回首页</button>
+        </div>
+        
+        <div class="profile-card">
+            <div class="profile-header">
+                <h2>个人信息</h2>
+            </div>
+            <div class="profile-body">
+                <div class="profile-detail"></div> <!-- 用户编号显示区域 -->
+                <div class="profile-detail"></div>
+                <div class="profile-detail"></div>
+                <div class="profile-detail"></div>
+                <div class="profile-detail"></div>
+                <div class="profile-detail"></div>
+            </div>
+            <div class="profile-form">
+                <form id="profileForm">
+                    <div>
+                        <label for="user_serial">用户编号:</label> <!-- 用户编号显示区域 -->
+                        <span id="user_serial"></span>
+                    </div>
+                    <div>
+                        <label for="email">电子邮件:</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <div>
+                        <label for="phone">电话:</label>
+                        <input type="text" id="phone" name="phone">
+                    </div>
+                    <div>
+                        <label for="username">用户名:</label>
+                        <input type="text" id="username" name="username">
+                    </div>
+                    <div >
+                        <label for="password">密码:</label>
+                        <input type="password" id="password" name="password">
+                    </div>
+                    <div>
+                        <label>积分:</label>
+                        <span id="integral"></span>
+                    </div>
+                    <div>
+                        <label>状态:</label>
+                        <span id="status"></span>
+                    </div>
+                    <div>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+            </div>
+            <div class="edit-button">
+                <button>修改</button>
+            </div>
+            <div class="works-button">
+                <button>个人作品</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

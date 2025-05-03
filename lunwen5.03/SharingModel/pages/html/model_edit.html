@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型编辑</title>
+    <link rel="stylesheet" href="../css/model_edit.css">
+    <script type="module" src="../js/model_edit.js"></script>
+</head>
+<body>
+    <div class="edit-container">
+        <h2>模型编辑</h2>
+        <form id="modelEditForm">
+            <div class="form-group">
+                <label for="modelName">模型名称</label>
+                <input type="text" id="modelName" name="modelName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="modelDescription">模型描述</label>
+                <textarea id="modelDescription" name="modelDescription" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">压缩类型:</label>
+                <select id="tags" name="tags" required>
+                    <option value="">请选择压缩状态</option>
+                    <option value="compress">压缩</option>
+                    <option value="uncompress">非压缩</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="type">文件类型:</label>
+                <select id="type" name="type" required>
+                    <option value="">请选择文件类型</option>
+                    <option value="glb">GLB</option>
+                    <option value="gltf">GLTF</option>
+                    <option value="obj">OBJ</option>
+                    <option value="fbx">FBX</option>
+                    <option value="mtl">MTL</option>
+                    <option value="tga">TGA</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="file">模型文件</label>
+                <p class="hint">请上传新的模型文件以替换现有文件</p>
+                <input type="file" id="file" name="file">
+                <p id="filePathInfo">当前模型文件路径: 未选择文件</p>
+            </div>
+
+            <input type="hidden" id="modelSerial" name="modelSerial">
+
+            <button type="submit" class="submit-button">保存更改</button>
+        </form>
+    </div>
+</body>
+</html>

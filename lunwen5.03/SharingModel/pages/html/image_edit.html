@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片编辑</title>
+    <link rel="stylesheet" href="../css/image_edit.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="model-name">图片编辑</h1>
+        
+        <div class="image-list-container">
+            <table id="image-table">
+                <thead>
+                    <tr>
+                        <th>预览</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="image-list">
+                    <!-- 图片列表将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 编辑模态框 -->
+    <div id="edit-modal" class="modal">
+    
+
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="edit-form" enctype="multipart/form-data">
+                <input type="hidden" id="edit-image-id">
+                
+                <div class="form-group">
+                    <label for="edit-image-file">更换图片:</label>
+                    <input type="file" id="edit-image-file" name="image" accept="image/*">
+                </div>
+
+                <button type="submit" class="save-btn">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import $ from 'jquery';
+        
+        // 基础配置
+        const API_BASE = 'http://127.0.0.1:8000';
+        
+        $(document).ready(function() {
+            // 获取模型ID
+            const modelId = new URLSearchParams(window.location.search).get('model_id');
+            if (!modelId) {
+                alert('缺少模型ID参数');
+                return;
+            }
+            
+            // 初始化DOM元素
+            const modelNameEl = document.getElementById('model-name');
+            const imageListEl = document.getElementById('image-list');
+            const modal = document.getElementById('edit-modal');
+            const closeBtn = document.querySelector('.close');
+            const editForm = document.getElementById('edit-form');
+            
+            // 加载图片数据
+            loadImages(modelId);
+            
+            // 关闭模态框事件
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            };
+            
+            // 点击模态框外部关闭
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+            
+            // 加载图片数据函数
+            function loadImages(modelId) {
+                $.ajax({
+                    url: `${API_BASE}/image_edit/${modelId}/`,
+                    method: 'GET',
+                    data: { model_id: modelId },
+                    success: function(data) {
+                        if (data.message === '获取成功') {
+                            modelNameEl.textContent = `图片编辑 - ${data.model.name}`;
+                            renderImageList(data.images);
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('获取图片数据失败:', error);
+                        alert('获取图片数据失败，请稍后重试');
+                    }
+                });
+            }
+            
+            // 渲染图片列表
+            function renderImageList(images) {
+                imageListEl.innerHTML = '';
+                
+                images.forEach(image => {
+                    const row = document.createElement('tr');
+                    
+                    // 图片预览单元格
+                    const previewCell = document.createElement('td');
+                    const img = document.createElement('img');
+                    
+                    // 处理图片路径
+                    const imagePath = image.image_path ? image.image_path.replace(/^\/+/, '') : 'media/default.jpg';
+                    const fullUrl = `${API_BASE}/media/${imagePath}`;
+                    
+                    // 设置图片属性
+                    img.src = fullUrl;
+                    img.className = 'img-preview';
+                    img.style.cursor = 'zoom-in';
+                    
+                    // 图片点击放大功能
+                    img.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const zoomContainer = document.createElement('div');
+                        zoomContainer.style.cssText = `
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0,0,0,0.9);
+                            z-index: 9999;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        `;
+                        
+                        const zoomImg = document.createElement('img');
+                        zoomImg.src = this.src;
+                        zoomImg.style.maxWidth = '90%';
+                        zoomImg.style.maxHeight = '90%';
+                        
+                        zoomContainer.onclick = function() {
+                            document.body.removeChild(zoomContainer);
+                        };
+                        
+                        zoomContainer.appendChild(zoomImg);
+                        document.body.appendChild(zoomContainer);
+                    });
+                    
+                    // 图片加载错误处理
+                    img.onerror = function() {
+                        console.error('图片加载失败:', fullUrl);
+                        this.src = createErrorImage(imagePath);
+                        
+                        fetch(fullUrl)
+                            .then(response => {
+                                if (!response.ok) throw new Error('HTTP error');
+                                return response.blob();
+                            })
+                            .then(blob => {
+                                this.src = URL.createObjectURL(blob);
+                            })
+                            .catch(console.error);
+                    };
+                    
+                    previewCell.appendChild(img);
+                    
+                    // 状态单元格
+                    const stateCell = document.createElement('td');
+                    stateCell.textContent = image.image_state || '未知状态';
+                    
+                    // 操作按钮
+                    const actionCell = document.createElement('td');
+                    
+                    // 编辑按钮
+                    const editBtn = document.createElement('button');
+                    editBtn.textContent = '编辑';
+                    editBtn.className = 'btn edit-btn';
+                    editBtn.onclick = () => {
+                        document.getElementById('edit-image-id').value = image.id;
+                        modal.style.display = 'block';
+                    };
+                    
+                    // 删除按钮
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = '删除';
+                    deleteBtn.className = 'btn delete-btn';
+                    deleteBtn.onclick = () => confirm('确定要删除这张图片吗？') && deleteImage(image.id);
+                    
+                    actionCell.appendChild(editBtn);
+                    actionCell.appendChild(deleteBtn);
+                    
+                    // 组装行
+                    row.appendChild(previewCell);
+                    row.appendChild(stateCell);
+                    row.appendChild(actionCell);
+                    
+                    imageListEl.appendChild(row);
+                });
+            }
+            
+            // 创建错误图片
+            function createErrorImage(path) {
+                return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+                    <rect width="100" height="100" fill="%23eee"/>
+                    <text x="50%" y="50%" font-family="Arial" font-size="10" text-anchor="middle" dominant-baseline="middle">
+                        图片加载失败: ${path}
+                    </text>
+                </svg>`;
+            }
+            
+            // 删除图片
+            function deleteImage(imageId) {
+                $.ajax({
+                    url: `${API_BASE}/image_delete/`,
+                    method: 'POST',
+                    data: { image_id: imageId },
+                    success: function(data) {
+                        if (data.message === '删除成功') {
+                            alert('图片已删除');
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('删除图片失败:', error);
+                        alert('删除图片失败，请稍后重试');
+                    }
+                });
+            }
+            
+            // 提交编辑表单
+            editForm.onsubmit = function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(editForm);
+                
+                $.ajax({
+                    url: `${API_BASE}/image_edit/${modelId}/`,
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.message === '保存成功') {
+                            alert('修改已保存');
+                            modal.style.display = 'none';
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('保存修改失败:', error);
+                        alert('保存修改失败，请稍后重试');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

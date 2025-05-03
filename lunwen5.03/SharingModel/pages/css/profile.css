@@ -1,0 +1,138 @@
+/* 个人信息页面样式 */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.profile-card {
+    border: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.profile-header h2 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.profile-body {
+    margin-top: 1rem;
+}
+
+.profile-detail {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* 统一按钮样式 */
+button {
+    padding: 0.75rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin: 0.5rem;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* 返回首页按钮特殊样式 */
+.back-home {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.back-home button {
+    background-color: #2ecc71;
+    padding: 0.75rem 2rem 0.75rem 1.5rem;
+    position: relative;
+}
+
+.back-home button:hover {
+    background-color: #27ae60;
+}
+
+.back-home button::before {
+    content: "←";
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.edit-button, .works-button {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.profile-form {
+    display: none;
+    margin-top: 1rem;
+}
+
+.profile-form.show {
+    display: block;
+}
+
+.profile-form div {
+    margin: 0.75rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.profile-form label {
+    min-width: 100px;
+    margin-right: 1rem;
+}
+
+.profile-form input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.profile-form input[disabled] {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 1rem;
+    }
+    
+    .profile-card {
+        padding: 1rem;
+    }
+    
+    .profile-form div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .profile-form label {
+        margin-bottom: 0.5rem;
+    }
+    
+    .profile-form input {
+        width: 100%;
+    }
+}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型信息页面</title>
+    <link rel="stylesheet" href="../css/profile_works.css">
+    <script type="module" src="../js/profile_work.js"></script>
+</head>
+<body>
+    <div class="model-header">
+        <h2>模型信息</h2>
+        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <button type="button" class="upload-button" onclick="uploadModel()">上传模型</button>
+            <button type="button" class="home-button" onclick="returnToHome()">返回首页</button>
+        </div>
+    </div>
+    <div id="model-card-container"></div><!-- 模型卡片容器 -->
+    <div id="pagination-container"></div><!-- 分页按钮容器 -->
+</body>
+</html>

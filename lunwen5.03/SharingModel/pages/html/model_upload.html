@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型上传</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea, select, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .hint {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script type="module">
+        // 导入 jQuery
+        import $ from 'jquery';
+
+        // 验证文件名是否与选择的类型匹配或包含所选类型作为压缩文件
+        function validateFileName(file, selectedType, compressionType) {
+            const validExtensions = {
+                'glb': /\.glb$/i,
+                'gltf': /\.gltf$/i,
+                'obj': /\.obj$/i,
+                'fbx': /\.fbx$/i,
+                'mtl': /\.mtl$/i,
+                'tga': /\.tga$/i,
+            };
+
+            const validCompressedExtensions = {
+                'zip': /\.(zip)$/i,
+                'rar': /\.(rar)$/i,
+            };
+
+            const fileName = file.name;
+            console.log('文件名:', fileName);
+            if (compressionType === 'compress') {
+                if (!validCompressedExtensions.zip.test(fileName) && !validCompressedExtensions.rar.test(fileName)) {
+                    return false;
+                }
+                return fileName.toLowerCase().includes(selectedType.toLowerCase());
+            } else {
+                const regex = validExtensions[selectedType];
+                return regex.test(fileName);
+            }
+        }
+
+        // 上传表单
+        function addFormSubmitListener() {
+            const form = document.querySelector('#uploadForm');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const userSerial = localStorage.getItem('user_serial'); // 获取用户编号
+                const type = formData.get('type'); // 获取文件类型
+                const compressionType = formData.get('tags'); // 获取压缩状态
+                const file = document.querySelector('#file').files[0]; // 获取文件对象
+
+                // 检查是否选择了文件
+                if (!file) {
+                    alert('请选择一个文件。');
+                    return;
+                }
+
+                // 检查是否选择了文件类型
+                if (!type) {
+                    alert('请选择文件类型。');
+                    return;
+                }
+
+                // 检查是否选择了压缩状态
+                if (!compressionType) {
+                    alert('请选择压缩状态。');
+                    return;
+                }
+
+                // 检查文件名是否有效
+                if (!validateFileName(file, type, compressionType)) {
+                    alert('文件类型与选择的不匹配，请重新选择文件。');
+                    return;
+                }
+
+                // 添加用户编号到表单数据
+                formData.append('user_serial', userSerial);
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/model_upload/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // 防止 jQuery 自动处理数据, 导致文件无法上传。必须设置
+                    contentType: false, // 防止 jQuery 自动设置请求头，导致文件无法上传。必须设置
+                    success: function(response) {
+                        console.log('上传结果:', response);
+                        alert(response.message);
+                        if (response.message === '上传成功') {
+                            window.location.href = 'http://127.0.0.1:8000/profile_works/';
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX 请求失败:', error);
+                        const errorMessage = xhr.responseJSON?.message ?? '未知错误';
+                        alert(`请求出错: ${errorMessage}`); // 增加适当的错误处理机制
+                    }
+                });
+            });
+        }
+
+        // 在文档加载完成后执行初始化操作
+        document.addEventListener('DOMContentLoaded', addFormSubmitListener);
+    </script>
+</head>
+<body>
+    <form id="uploadForm">
+        <label for="name">名称:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">描述:</label>
+        <textarea id="description" name="description" rows="4" cols="50"></textarea>
+
+        <label for="tags">压缩类型:</label>
+        <select id="tags" name="tags" required>
+            <option value="">请选择压缩状态</option>
+            <option value="compress">压缩</option>
+            <option value="uncompress">非压缩</option>
+        </select>
+
+        <label for="type">类型:</label>
+        <select id="type" name="type" required>
+            <option value="">请选择文件类型</option>
+            <option value="glb">GLB</option>
+            <option value="gltf">GLTF</option>
+            <option value="obj">OBJ</option>
+            <option value="fbx">FBX</option>
+            <option value="mtl">MTL</option>
+            <option value="tga">TGA</option>
+        </select>
+
+        <label for="file">上传文件:</label>
+        <p class="hint">不建议不上传压缩包（可能会导致丢失贴图材质等），若上传压缩包，请确保压缩包内文件的主名与扩展名均含类型标识（如fbx/obj），且仅支持ZIP/RAR格式。（例：textfbx.zip,textobj.rar）</p>
+        <input type="file" id="file" name="file" required>
+
+        <input type="submit" value="提交">
+    </form>
+</body>
+</html>
