@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型上传</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        form {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        input[type="text"], 
+        textarea, 
+        select, 
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, 
+        textarea:focus, 
+        select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        input[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+        .hint {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        #thumbnail-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f5f7fa;
+            border-radius: 4px;
+            border: 1px dashed #bdc3c7;
+        }
+        /* 图片预览样式 */
+        #thumbnail-preview div {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        #thumbnail-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        #thumbnail-preview div:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* 图片放大模态框 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        #thumbnail-preview button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            form {
+                padding: 20px;
+                margin: 15px;
+            }
+        }
+    </style>
+    <script type="module">
+        // 导入 jQuery
+        import $ from 'jquery';
+
+        // 验证文件名是否与选择的类型匹配或包含所选类型作为压缩文件
+        function validateFileName(file, selectedType, compressionType) {
+            const validExtensions = {
+                'glb': /\.glb$/i,
+                'gltf': /\.gltf$/i,
+                'obj': /\.obj$/i,
+                'fbx': /\.fbx$/i,
+                'mtl': /\.mtl$/i,
+                'tga': /\.tga$/i,
+            };
+
+            const validCompressedExtensions = {
+                'zip': /\.(zip)$/i,
+                'rar': /\.(rar)$/i,
+            };
+
+            const fileName = file.name;
+            console.log('文件名:', fileName);
+            if (compressionType === 'compress') {
+                if (!validCompressedExtensions.zip.test(fileName) && !validCompressedExtensions.rar.test(fileName)) {
+                    return false;
+                }
+                return fileName.toLowerCase().includes(selectedType.toLowerCase());
+            } else {
+                const regex = validExtensions[selectedType];
+                return regex.test(fileName);
+            }
+        }
+
+        // 上传表单
+        function addFormSubmitListener() {
+            const form = document.querySelector('#uploadForm');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const userSerial = localStorage.getItem('user_serial'); // 获取用户编号
+                const type = formData.get('type'); // 获取文件类型
+                const compressionType = formData.get('tags'); // 获取压缩状态
+                const file = document.querySelector('#file').files[0]; // 获取模型文件对象
+                const thumbnails = document.querySelector('#thumbnail').files; // 获取所有简略图文件
+
+                // 检查是否选择了模型文件
+                if (!file) {
+                    alert('请选择一个模型文件。');
+                    return;
+                }
+
+                // 检查简略图文件类型，可以上传多个文件
+                for (let i = 0; i < thumbnails.length; i++) {
+                    if (thumbnails[i] && !['image/jpeg', 'image/png'].includes(thumbnails[i].type)) {
+                        alert('所有简略图必须是JPG或PNG格式');
+                        return;
+                    }
+                }
+
+                // 检查是否选择了文件类型
+                if (!type) {
+                    alert('请选择文件类型。');
+                    return;
+                }
+
+                // 检查是否选择了压缩状态
+                if (!compressionType) {
+                    alert('请选择压缩状态。');
+                    return;
+                }
+
+                // 检查文件名是否有效
+                if (!validateFileName(file, type, compressionType)) {
+                    alert('文件类型与选择的不匹配，请重新选择文件。');
+                    return;
+                }
+
+                // 添加用户编号和简略图到表单数据
+                formData.append('user_serial', userSerial);
+                for (let i = 0; i < thumbnails.length; i++) {
+                    formData.append('thumbnails[]', thumbnails[i]);
+                }
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/model_upload/',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // 防止 jQuery 自动处理数据, 导致文件无法上传。必须设置
+                    contentType: false, // 防止 jQuery 自动设置请求头，导致文件无法上传。必须设置
+                    success: function(response) {
+                        console.log('上传结果:', response);
+                        alert(response.message);
+                        if (response.message === '上传成功') {
+                            window.location.href = 'http://127.0.0.1:8000/profile_works/';
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX 请求失败:', error);
+                        const errorMessage = xhr.responseJSON?.message ?? '未知错误';
+                        alert(`请求出错: ${errorMessage}`); // 增加适当的错误处理机制
+                    }
+                });
+            });
+        }
+
+        // 在文档加载完成后执行初始化操作
+        document.addEventListener('DOMContentLoaded', function() {
+            addFormSubmitListener();
+            
+            // 创建图片放大模态框
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.innerHTML = `
+                <span class="close-modal">&times;</span>
+                <div class="image-modal-content">
+                    <img src="" alt="放大图片">
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // 添加图片预览功能
+            const thumbnailInput = document.querySelector('#thumbnail');
+            const previewContainer = document.createElement('div');
+            previewContainer.id = 'thumbnail-preview';
+            previewContainer.style.display = 'flex';
+            previewContainer.style.flexWrap = 'wrap';
+            previewContainer.style.gap = '10px';
+            previewContainer.style.margin = '10px 0';
+            thumbnailInput.parentNode.insertBefore(previewContainer, thumbnailInput.nextSibling);
+
+            thumbnailInput.addEventListener('change', function(e) {
+                // 清空之前的预览
+                previewContainer.innerHTML = '';
+                
+                // 处理每个选中的文件
+                for (let file of e.target.files) {
+                    if (!file.type.match('image.*')) continue;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.createElement('div');
+                        preview.style.position = 'relative';
+                        preview.style.width = '100px';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100%';
+                        img.style.maxHeight = '100px';
+                        
+                        // 点击预览图片放大
+                        img.addEventListener('click', function() {
+                            const modalImg = modal.querySelector('img');
+                            modalImg.src = this.src;
+                            modal.style.display = 'flex';
+                        });
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.textContent = '×';
+                        removeBtn.style.position = 'absolute';
+                        removeBtn.style.top = '0';
+                        removeBtn.style.right = '0';
+                        removeBtn.style.background = 'red';
+                        removeBtn.style.color = 'white';
+                        removeBtn.style.border = 'none';
+                        removeBtn.style.borderRadius = '50%';
+                        removeBtn.style.cursor = 'pointer';
+                        
+                        removeBtn.addEventListener('click', function(event) {
+                            event.stopPropagation();
+                            preview.remove();
+                            // 从FileList中移除对应的文件
+                            const newFiles = Array.from(thumbnailInput.files).filter(f => f !== file);
+                            const dataTransfer = new DataTransfer();
+                            newFiles.forEach(f => dataTransfer.items.add(f));
+                            thumbnailInput.files = dataTransfer.files;
+                        });
+                        
+                        preview.appendChild(img);
+                        preview.appendChild(removeBtn);
+                        previewContainer.appendChild(preview);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 关闭模态框
+            modal.querySelector('.close-modal').addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // 点击背景关闭模态框
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <form id="uploadForm">
+        <label for="name">名称:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">描述:</label>
+        <textarea id="description" name="description" rows="4" cols="50"></textarea>
+
+        <label for="tags">压缩类型:</label>
+        <select id="tags" name="tags" required>
+            <option value="">请选择压缩状态</option>
+            <option value="compress">压缩</option>
+            <option value="uncompress">非压缩</option>
+        </select>
+
+        <label for="type">类型:</label>
+        <select id="type" name="type" required>
+            <option value="">请选择文件类型</option>
+            <option value="glb">GLB</option>
+            <option value="gltf">GLTF</option>
+            <option value="obj">OBJ</option>
+            <option value="fbx">FBX</option>
+            <option value="mtl">MTL</option>
+            <option value="tga">TGA</option>
+        </select>
+
+        <label for="file">上传文件:</label>
+        <p class="hint">不建议不上传压缩包（可能会导致丢失贴图材质等），若上传压缩包，请确保压缩包内文件的主名与扩展名均含类型标识（如fbx/obj），且仅支持ZIP/RAR格式。（例：textfbx.zip,textobj.rar）压缩包内别在有压缩文件，否则会导致上传失败。</p>
+        <input type="file" id="file" name="file" required>
+
+        <label for="thumbnail">上传简略图:</label>
+        <p class="hint">建议上传JPG/PNG格式的图片，大小不超过5MB</p>
+        <input type="file" id="thumbnail" name="thumbnail" accept="image/jpeg,image/png" multiple><!--  允许上传多个文件 -->
+
+        <input type="submit" value="提交">
+    </form>
+</body>
+</html>

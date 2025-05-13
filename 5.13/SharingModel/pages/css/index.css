@@ -1,0 +1,535 @@
+/* 基础样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 头部区域 */
+#header {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#model h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#user-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+#user-controls button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+#loginButton {
+  background-color: #3498db;
+  color: #fff;
+}
+
+#logoutButton {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+#profileButton, #uploadButton, #checkinButton {
+  background-color: #27ae60;
+  color: #fff;
+}
+
+#user-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 搜索区域 */
+#search-container {
+  padding: 1.2rem 2rem;
+  background-color: #2c3e50;
+  display: flex;
+  gap: 0.75rem;
+}
+
+#search-input {
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: rgba(0,0,0,0.1);
+  color: #fff;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: #3498db;
+  background-color: rgba(0,0,0,0.2);
+}
+
+#search-button {
+  padding: 0.75rem 1.75rem;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-weight: 500;
+}
+
+#search-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+/* 风格按钮区域 - 与头部样式统一 */
+#style-buttons {
+  padding: 1rem 2rem;
+  background-color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.all-styles-btn {
+  padding: 0.6rem 1.2rem;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.all-styles-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.all-styles-btn.active {
+  background-color: #3498db;
+}
+
+.style-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.style-btn {
+  padding: 0.6rem 1.2rem;
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.style-btn:hover {
+  background-color: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+.style-btn.active {
+  background-color: #3498db;
+}
+
+/* 更多风格按钮 */
+.expand-btn {
+  padding: 0.6rem 1.2rem;
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-weight: 500;
+}
+
+.expand-btn:hover {
+  background-color: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+/* 格式按钮区域 - 与头部样式统一 */
+#format-buttons {
+  padding: 1rem 2rem;
+  background-color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.format-btn {
+  padding: 0.6rem 1.2rem;
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.format-btn:hover {
+  background-color: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+.format-btn.active {
+  background-color: #3498db;
+}
+
+/* 内容区域 */
+#content-container {
+  flex: 1;
+  padding: 2rem;
+}
+
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  height: 80vh; /* 两行卡片的高度 */
+}
+
+.model-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 40vh; /* 每个卡片高度为屏幕40% */
+  width: 100%; /* 宽度自适应网格列 */
+}
+
+@media (max-width: 1024px) {
+  .models-grid {
+    grid-template-columns: repeat(2, 1fr);
+    height: 180vh; /* 三行卡片的高度 */
+  }
+}
+
+@media (max-width: 768px) {
+  .models-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+.model-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.model-image-container {
+  position: relative;
+  width: 100%;
+  height: 70%; /* 固定高度为卡片高度的70% */
+  background-color: #f8f9fa;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.model-image-container img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.4s ease;
+}
+
+.model-card:hover .model-image-container img {
+  transform: scale(1.08);
+}
+
+.model-content {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 30%;
+}
+
+.model-content h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.model-download {
+  margin-top: auto;
+}
+
+.model-download .download-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-align: center;
+}
+
+.model-download .download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .models-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  #header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  #user-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  #search-container, #style-buttons, #format-buttons {
+    padding: 1rem;
+  }
+  
+  .models-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* 图片放大模态框样式 - 优化版 */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
+  overflow: hidden;
+  touch-action: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  display: block;
+  opacity: 1;
+}
+
+.modal-content {
+  position: absolute;
+  max-width: 90%;
+  max-height: 90%;
+  margin: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.3s ease;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.modal-content.grabbing {
+  cursor: grabbing;
+}
+
+.modal-content.zoom {
+  transform: translate(-50%, -50%) scale(2);
+  cursor: zoom-out;
+}
+
+.image-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: all 0.3s;
+    z-index: 1001;
+    font-size: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.image-nav:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.image-nav.prev {
+    left: 20px;
+}
+
+.image-nav.next {
+    right: 20px;
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+    .image-nav {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 35px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+  transition: transform 0.2s ease;
+}
+
+.close-modal:hover {
+  transform: scale(1.2);
+}
+
+.modal-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-controls {
+  position: absolute;
+  bottom: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 1001;
+}
+
+.modal-btn {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-btn:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .modal-controls {
+    bottom: 20px;
+  }
+  
+  .modal-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .close-modal {
+    top: 10px;
+    right: 15px;
+    font-size: 30px;
+  }
+  
+  .modal-content {
+    max-width: 95%;
+    max-height: 95%;
+  }
+}
